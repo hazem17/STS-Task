@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using Unity.Mathematics;
+using static UnityEngine.GraphicsBuffer;
 
 public class BikeController : MonoBehaviour
 {
@@ -14,10 +17,23 @@ public class BikeController : MonoBehaviour
     WheelControl[] wheels;
     Rigidbody rigidBody;
 
+
     [SerializeField] private float currentSpeed;
     [SerializeField] private float acc;
     [SerializeField] private float steeringSpeed;
+    [SerializeField] private LayerMask groundMask;
+    private bool isGrounded;
 
+    [Header("Steering Options")]
+    [SerializeField] private Transform rightHand;
+    [SerializeField] private Transform rightHandRef;
+    [SerializeField] private Transform leftHand;
+    [SerializeField] private Transform leftHandRef;
+
+
+    [Header("Direction Options")]
+    [SerializeField] private Transform directionArrow;
+    [SerializeField] private TextMeshPro distanceText;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +41,7 @@ public class BikeController : MonoBehaviour
         rigidBody = GetComponent<Rigidbody>();
 
         // Adjust center of mass vertically, to help prevent the car from rolling
-        rigidBody.centerOfMass += Vector3.up * centreOfGravityOffset;
+       // rigidBody.centerOfMass += Vector3.up * centreOfGravityOffset;
 
         // Find all child GameObjects that have the WheelControl script attached
         wheels = GetComponentsInChildren<WheelControl>();
@@ -34,9 +50,17 @@ public class BikeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        rightHandRef.position = new Vector3(rightHand.position.x, 1, rightHand.position.z);
+        leftHandRef.position = new Vector3(leftHand.position.x, 1, leftHand.position.z);
         float vInput = Input.GetAxis("Vertical");
         float hInput = Input.GetAxis("Horizontal");
+
+        if (GameManager.Instance.currentDeliverTarget)
+        {
+            distanceText.text = (int)Vector3.Distance(transform.position, GameManager.Instance.currentDeliverTarget.transform.position) + "m";
+
+            directionArrow.transform.LookAt(new Vector3(GameManager.Instance.currentDeliverTarget.transform.position.x, directionArrow.position.y, GameManager.Instance.currentDeliverTarget.transform.position.z));
+        }
 
         //// Calculate current speed in relation to the forward direction of the car
         //// (this returns a negative number when traveling backwards)
@@ -85,11 +109,43 @@ public class BikeController : MonoBehaviour
         //    }
         //}
 
+        RaycastHit hit;
+        // Does the ray intersect any objects excluding the player layer
+        if (Physics.Raycast(transform.position, -Vector3.up, out hit, 0.4f, groundMask))
+        {
+            Debug.DrawRay(transform.position, -Vector3.up * hit.distance, Color.yellow);
+            Debug.Log("Did Hit");
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
         currentSpeed = Mathf.Clamp(currentSpeed + vInput * acc * Time.deltaTime, 0, maxSpeed);
-        rigidBody.velocity = transform.forward * currentSpeed;
+        transform.position += transform.forward * currentSpeed * Time.deltaTime;
         transform.Rotate(transform.up, hInput * Time.deltaTime * steeringSpeed);
+        if (isGrounded)
+        {
+            //currentSpeed = Mathf.Clamp(currentSpeed + vInput * acc * Time.deltaTime, 0, maxSpeed);
+            //rigidBody.velocity = transform.forward * currentSpeed;
+            //transform.Rotate(transform.up, hInput * Time.deltaTime * steeringSpeed);
+            
+        }
+        else
+        {
+            //rigidBody.velocity = Vector3.zero;
+        }
+        
         //transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, transform.localEulerAngles.y, 0);
     }
 
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("DeliverTarget"))
+        {
+            print("Package delivered");
+        }
+    }
+
+
 }

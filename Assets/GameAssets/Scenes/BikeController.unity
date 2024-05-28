@@ -388,12 +388,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 65326994}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.24850373, y: -0, z: -0, w: 0.96863097}
-  m_LocalPosition: {x: -0.0183913, y: -0.1460903, z: 0.002619058}
+  m_LocalRotation: {x: 0.24850374, y: -0, z: -0, w: 0.96863097}
+  m_LocalPosition: {x: -0.018391281, y: -0.1460903, z: 0.002619058}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 365947991}
+  m_Father: {fileID: 1987445356}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &65326996
 MeshRenderer:
@@ -477,7 +477,7 @@ Transform:
   m_Children:
   - {fileID: 642814163}
   - {fileID: 397782587}
-  m_Father: {fileID: 365947991}
+  m_Father: {fileID: 1987445356}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &365276910
 GameObject:
@@ -572,7 +572,7 @@ GameObject:
   m_Component:
   - component: {fileID: 365947991}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: SteeringParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -591,9 +591,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 65326995}
-  - {fileID: 205848007}
-  - {fileID: 1280639997}
+  - {fileID: 1987445356}
   m_Father: {fileID: 656086894}
   m_LocalEulerAnglesHint: {x: -28.778, y: 0, z: 0}
 --- !u!1 &387655571
@@ -1115,6 +1113,8 @@ MonoBehaviour:
   rightHandRef: {fileID: 1112345251}
   leftHand: {fileID: 1058601295}
   leftHandRef: {fileID: 945753245}
+  steeringCenter: {fileID: 1386484482}
+  steeringObject: {fileID: 1987445356}
   directionArrow: {fileID: 397782587}
   distanceText: {fileID: 642814164}
 --- !u!4 &656086894
@@ -1136,6 +1136,7 @@ Transform:
   - {fileID: 497102052}
   - {fileID: 1405664951}
   - {fileID: 387655572}
+  - {fileID: 1386484482}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &656086895
@@ -1147,7 +1148,7 @@ Rigidbody:
   m_GameObject: {fileID: 656086891}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 0.2
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -1741,7 +1742,6 @@ GameObject:
   - component: {fileID: 945753245}
   - component: {fileID: 945753244}
   - component: {fileID: 945753243}
-  - component: {fileID: 945753242}
   m_Layer: 0
   m_Name: LeftHandRef
   m_TagString: Untagged
@@ -1749,27 +1749,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &945753242
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 945753241}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &945753243
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2022,7 +2001,6 @@ GameObject:
   - component: {fileID: 1058601295}
   - component: {fileID: 1058601294}
   - component: {fileID: 1058601293}
-  - component: {fileID: 1058601292}
   m_Layer: 0
   m_Name: LeftHand
   m_TagString: Untagged
@@ -2030,27 +2008,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1058601292
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1058601291}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1058601293
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2110,7 +2067,7 @@ Transform:
   m_GameObject: {fileID: 1058601291}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.154563, y: 3.375983, z: 0.6221679}
+  m_LocalPosition: {x: 1.005, y: 1.301, z: 0.802}
   m_LocalScale: {x: 0.098439, y: 0.098439, z: 0.098439}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2127,7 +2084,6 @@ GameObject:
   - component: {fileID: 1112345251}
   - component: {fileID: 1112345250}
   - component: {fileID: 1112345249}
-  - component: {fileID: 1112345248}
   m_Layer: 0
   m_Name: RightHandRef
   m_TagString: Untagged
@@ -2135,27 +2091,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1112345248
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1112345247}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1112345249
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2288,7 +2223,7 @@ RectTransform:
   - {fileID: 1625794508}
   - {fileID: 1797815556}
   - {fileID: 1748650960}
-  m_Father: {fileID: 365947991}
+  m_Father: {fileID: 1987445356}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2358,6 +2293,37 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &1386484481
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1386484482}
+  m_Layer: 0
+  m_Name: SteerCenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1386484482
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1386484481}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.0908, z: -0.2794}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 656086894}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1405664950
 GameObject:
   m_ObjectHideFlags: 0
@@ -2732,7 +2698,6 @@ GameObject:
   - component: {fileID: 1761792360}
   - component: {fileID: 1761792359}
   - component: {fileID: 1761792358}
-  - component: {fileID: 1761792357}
   m_Layer: 0
   m_Name: RightHand
   m_TagString: Untagged
@@ -2740,27 +2705,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1761792357
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1761792356}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1761792358
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2820,7 +2764,7 @@ Transform:
   m_GameObject: {fileID: 1761792356}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.154563, y: 3.375983, z: 0.6221679}
+  m_LocalPosition: {x: 1.348, y: 1.301, z: 0.802}
   m_LocalScale: {x: 0.098439, y: 0.098439, z: 0.098439}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3320,6 +3264,40 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -19.513, y: 0, z: 0}
+--- !u!1 &1987445355
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1987445356}
+  m_Layer: 0
+  m_Name: SteeringRotator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1987445356
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987445355}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 65326995}
+  - {fileID: 205848007}
+  - {fileID: 1280639997}
+  m_Father: {fileID: 365947991}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1989422651
 GameObject:
   m_ObjectHideFlags: 0
@@ -3419,6 +3397,8 @@ MonoBehaviour:
   rightHandRef: {fileID: 0}
   leftHand: {fileID: 0}
   leftHandRef: {fileID: 0}
+  steeringCenter: {fileID: 0}
+  steeringObject: {fileID: 0}
   directionArrow: {fileID: 0}
   distanceText: {fileID: 0}
 --- !u!33 &1667631932547755427

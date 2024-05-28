@@ -29,6 +29,8 @@ public class BikeController : MonoBehaviour
     [SerializeField] private Transform rightHandRef;
     [SerializeField] private Transform leftHand;
     [SerializeField] private Transform leftHandRef;
+    [SerializeField] private Transform steeringCenter;
+    [SerializeField] private Transform steeringObject;
 
 
     [Header("Direction Options")]
@@ -50,8 +52,15 @@ public class BikeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rightHandRef.position = new Vector3(rightHand.position.x, 1, rightHand.position.z);
-        leftHandRef.position = new Vector3(leftHand.position.x, 1, leftHand.position.z);
+        rightHandRef.position = new Vector3(rightHand.position.x, steeringCenter.position.y, rightHand.position.z);
+        leftHandRef.position = new Vector3(leftHand.position.x, steeringCenter.position.y, leftHand.position.z);
+
+        Vector3 steeringDirection = rightHandRef.position - leftHandRef.position;
+        Debug.DrawRay(steeringCenter.position, steeringDirection , Color.yellow);
+        float angle = math.sign(Vector3.Cross(steeringCenter.right, steeringDirection).y) * Vector3.Angle(steeringCenter.right, steeringDirection);
+        print(angle);
+        steeringObject.localEulerAngles = new Vector3(0, math.clamp(angle,-30,30), 0);
+
         float vInput = Input.GetAxis("Vertical");
         float hInput = Input.GetAxis("Horizontal");
 
@@ -109,21 +118,26 @@ public class BikeController : MonoBehaviour
         //    }
         //}
 
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(transform.position, -Vector3.up, out hit, 0.4f, groundMask))
-        {
-            Debug.DrawRay(transform.position, -Vector3.up * hit.distance, Color.yellow);
-            Debug.Log("Did Hit");
-            isGrounded = true;
-        }
-        else
-        {
-            isGrounded = false;
-        }
+        //RaycastHit hit;
+        //// Does the ray intersect any objects excluding the player layer
+        //if (Physics.Raycast(transform.position, -Vector3.up, out hit, 0.4f, groundMask))
+        //{
+        //    Debug.DrawRay(transform.position, -Vector3.up * hit.distance, Color.yellow);
+        //    Debug.Log("Did Hit");
+        //    isGrounded = true;
+        //}
+        //else
+        //{
+        //    isGrounded = false;
+        //}
+
         currentSpeed = Mathf.Clamp(currentSpeed + vInput * acc * Time.deltaTime, 0, maxSpeed);
         transform.position += transform.forward * currentSpeed * Time.deltaTime;
-        transform.Rotate(transform.up, hInput * Time.deltaTime * steeringSpeed);
+
+        if (rigidBody.velocity.magnitude > 0)
+        {
+            transform.Rotate(transform.up, Time.deltaTime * angle);
+        }
         if (isGrounded)
         {
             //currentSpeed = Mathf.Clamp(currentSpeed + vInput * acc * Time.deltaTime, 0, maxSpeed);

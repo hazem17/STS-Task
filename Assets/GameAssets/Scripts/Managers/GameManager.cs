@@ -11,7 +11,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private bool gameStarted;
 
     [Header("Packages Options")]
-    [SerializeField] private DeliverTarget[] deliverTargetArray;
+    [SerializeField] private List<DeliverTarget> deliverTargetArray;
     public DeliverTarget currentDeliverTarget;
     [SerializeField] private int baseDeliverScore;
 
@@ -22,9 +22,13 @@ public class GameManager : Singleton<GameManager>
     // Start is called before the first frame update
     IEnumerator Start()
     {
+        currentTime = gameTime;
+        UIController.Instance.SetTimer(currentTime);
+        UIController.Instance.UpdateScore(playerScore);
+
         yield return new WaitForSeconds(3);
         StartCoroutine(CountdownTimer());
-        currentTime = gameTime;
+        
     }
 
     // Update is called once per frame
@@ -39,6 +43,7 @@ public class GameManager : Singleton<GameManager>
                 gameStarted = false;
                 UIController.Instance.SetTimer(0);
                 print("End Game");
+                bikeController.engineIsOn = false;
             }
         }
     }
@@ -47,6 +52,14 @@ public class GameManager : Singleton<GameManager>
     {
         playerScore += baseDeliverScore;
         UIController.Instance.UpdateScore(playerScore);
+
+        DeliverTarget temp = currentDeliverTarget;
+        temp.TriggerTarget(false);
+
+        currentDeliverTarget = deliverTargetArray[Random.Range(0, deliverTargetArray.Count)];
+        currentDeliverTarget.TriggerTarget(true);
+        deliverTargetArray.Remove(currentDeliverTarget);
+        deliverTargetArray.Add(temp);
     }
 
     IEnumerator CountdownTimer()
@@ -61,6 +74,15 @@ public class GameManager : Singleton<GameManager>
             UIController.Instance.DisplayMessage(displayText);
             yield return new WaitForSeconds(2);
         }
+        StartGame();
+    }
+
+    private void StartGame()
+    {
         gameStarted = true;
+        bikeController.engineIsOn = true;
+        currentDeliverTarget = deliverTargetArray[Random.Range(0, deliverTargetArray.Count)];
+        currentDeliverTarget.TriggerTarget(true);
+        deliverTargetArray.Remove(currentDeliverTarget);
     }
 }

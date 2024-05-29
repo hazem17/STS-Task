@@ -68,5 +68,6 @@ public class UIController : Singleton<UIController>
             timer += Time.deltaTime;
             yield return null;
         }
+        messageTextCanvasGroup.alpha = 0;
     }
 }

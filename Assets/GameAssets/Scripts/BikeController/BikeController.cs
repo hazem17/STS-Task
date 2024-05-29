@@ -11,6 +11,8 @@ public class BikeController : MonoBehaviour
     public OVRInput.Axis1D speedBTN = OVRInput.Axis1D.PrimaryIndexTrigger;
     private Rigidbody rigidBody;
 
+    public bool engineIsOn;
+
     [Header("Movement Options")]
     [SerializeField] private float currentSpeed;
     [SerializeField] private float maxSpeed;
@@ -46,18 +48,25 @@ public class BikeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        float vInput = Input.GetAxis("Vertical");
+        float hInput = Input.GetAxis("Horizontal");
+
         float x = OVRInput.Get(speedBTN);
 
         //--- calculate steering 
         CalculateSteering();
+        steeringAngle = hInput * maxSteeringAngle;
+
+        if (!engineIsOn)
+            return;
 
         //--- Get Package direction
         GetPackageDirection();
 
         //---- movement
         MoveBike();
-        float vInput = Input.GetAxis("Vertical");
-        float hInput = Input.GetAxis("Horizontal");
+       
 
         //--- check if is grounded
         isGrounded = CheckIsGrounded();
@@ -91,7 +100,7 @@ public class BikeController : MonoBehaviour
 
     private void CalculateSpeed(float vInput)
     {
-        if (!isGrounded)
+        if (isGrounded)
         {
             if (vInput > 0)
             {
@@ -155,6 +164,7 @@ public class BikeController : MonoBehaviour
         if (other.CompareTag("DeliverTarget"))
         {
             print("Package delivered");
+            GameManager.Instance.DeliverPackage();
         }
     }
 

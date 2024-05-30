@@ -9,6 +9,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private BikeController bikeController;
     [SerializeField] private int playerScore;
     [SerializeField] private bool gameStarted;
+    [SerializeField] private PowerUpSpawner powerUpSpawner;
 
     [Header("Packages Options")]
     [SerializeField] private List<DeliverTarget> deliverTargetArray;
@@ -18,6 +19,8 @@ public class GameManager : Singleton<GameManager>
     [Header("Time Options")]
     [SerializeField] private float gameTime;
     [SerializeField] private float currentTime;
+
+    public BikeController BikeController { get => bikeController; }
 
     // Start is called before the first frame update
     IEnumerator Start()
@@ -43,8 +46,18 @@ public class GameManager : Singleton<GameManager>
                 gameStarted = false;
                 UIController.Instance.SetTimer(0);
                 print("End Game");
-                bikeController.engineIsOn = false;
+                bikeController.StopBike();
+                UIController.Instance.DisplayMessage("Times Up!!!");
             }
+        }
+
+        if (Input.GetKey(KeyCode.F))
+        {
+            Time.timeScale = 5;
+        }
+        else
+        {
+            Time.timeScale = 1;
         }
     }
 
@@ -52,6 +65,7 @@ public class GameManager : Singleton<GameManager>
     {
         playerScore += baseDeliverScore;
         UIController.Instance.UpdateScore(playerScore);
+        UIController.Instance.DisplayMessage("Package Delivered");
 
         DeliverTarget temp = currentDeliverTarget;
         temp.TriggerTarget(false);
@@ -84,5 +98,10 @@ public class GameManager : Singleton<GameManager>
         currentDeliverTarget = deliverTargetArray[Random.Range(0, deliverTargetArray.Count)];
         currentDeliverTarget.TriggerTarget(true);
         deliverTargetArray.Remove(currentDeliverTarget);
+        powerUpSpawner.StartSpawning();
+    }
+    public void IncreaseTime()
+    {
+        currentTime += 10;
     }
 }

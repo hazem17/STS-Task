@@ -24,7 +24,7 @@ Shader "Custom/ColumnGlow"
 	{
 		Tags { "RenderType"="Transparent" "IgnoreProjector"="True"  "Queue"="Transparent" }
 		Blend SrcAlpha One
-		Cull Off Lighting Off ZWrite On
+		//Cull Off Lighting Off ZWrite On
 		
 		LOD 0
 

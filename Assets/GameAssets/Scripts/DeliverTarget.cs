@@ -5,6 +5,7 @@ using UnityEngine;
 public class DeliverTarget : MonoBehaviour
 {
     [SerializeField] private GameObject triggerObject;
+    [SerializeField] private Transform mapPinpoint;
     private Collider col;
     // Start is called before the first frame update
     void Start()
@@ -15,7 +16,7 @@ public class DeliverTarget : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        mapPinpoint.localEulerAngles = new Vector3(90, 0, -GameManager.Instance.BikeController.transform.eulerAngles.y);
     }
 
     public void TriggerTarget(bool state)

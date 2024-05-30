@@ -7,8 +7,10 @@ using static UnityEngine.GraphicsBuffer;
 
 public class BikeController : MonoBehaviour
 {
-    public OVRInput.RawButton brakesButton = OVRInput.RawButton.LIndexTrigger;
-    public OVRInput.Axis1D speedBTN = OVRInput.Axis1D.PrimaryIndexTrigger;
+    public bool PC_Controls;
+    //public OVRInput.RawButton brakesButton = OVRInput.RawButton.LIndexTrigger;
+    public OVRInput.Axis1D speedBTN = OVRInput.Axis1D.SecondaryIndexTrigger;
+    public OVRInput.Axis1D brakesBTN = OVRInput.Axis1D.PrimaryIndexTrigger;
     private Rigidbody rigidBody;
 
     public bool engineIsOn;
@@ -43,20 +45,32 @@ public class BikeController : MonoBehaviour
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        distanceText.text = "0m";
     }
 
     // Update is called once per frame
     void Update()
     {
+        float speed;
+        float brakes;
+        if (PC_Controls)
+        {
+            speed = Input.GetKey(KeyCode.W)? 1:0;
+            brakes = Input.GetKey(KeyCode.S)? 1:0;
 
-        float vInput = Input.GetAxis("Vertical");
-        float hInput = Input.GetAxis("Horizontal");
-
-        float x = OVRInput.Get(speedBTN);
+            float hInput = Input.GetAxis("Horizontal");
+            steeringAngle = hInput * maxSteeringAngle;
+        }
+        else
+        {
+            speed = OVRInput.Get(speedBTN);
+            brakes = OVRInput.Get(brakesBTN);
+            CalculateSteering();
+        }
 
         //--- calculate steering 
-        CalculateSteering();
-        steeringAngle = hInput * maxSteeringAngle;
+        
+        
 
         if (!engineIsOn)
             return;
@@ -73,9 +87,16 @@ public class BikeController : MonoBehaviour
 
 
         //-- calculate bike speed
-        CalculateSpeed(vInput);
+        CalculateSpeed(speed, brakes);
         
 
+    }
+
+    public void StopBike()
+    {
+        currentSpeed = 0;
+        currentReverse = 0;
+        engineIsOn= false;
     }
 
     private bool CheckIsGrounded()
@@ -98,22 +119,25 @@ public class BikeController : MonoBehaviour
         }
     }
 
-    private void CalculateSpeed(float vInput)
+    private void CalculateSpeed(float speed, float brakes)
     {
         if (isGrounded)
         {
-            if (vInput > 0)
+            if (speed > 0)
             {
-                currentSpeed += vInput * acceleration * Time.deltaTime;
+                currentSpeed += speed * acceleration * Time.deltaTime;
             }
-            else if (vInput == 0)
+            else
             {
                 currentSpeed -= deceleration * Time.deltaTime;
-                currentReverse -= deceleration * Time.deltaTime;
             }
-            else if (vInput < 0)
+            if (brakes > 0)
             {
-                currentReverse += math.abs(vInput) * deceleration * Time.deltaTime;
+                currentReverse += math.abs(brakes) * deceleration * Time.deltaTime;
+            }
+            else
+            {
+                currentReverse -= acceleration * 2 * Time.deltaTime;
             }
         }
         else
@@ -165,6 +189,23 @@ public class BikeController : MonoBehaviour
         {
             print("Package delivered");
             GameManager.Instance.DeliverPackage();
+        }
+        else if (other.CompareTag("PowerUp"))
+        {
+            PowerUp tempPow = other.gameObject.GetComponent<PowerUp>();
+            switch (tempPow.powerUpType)
+            {
+                case PowerUpType.Time:
+                    GameManager.Instance.IncreaseTime();
+                    break;
+                case PowerUpType.Missile:
+                    break;
+                case PowerUpType.Speed:
+                    break;
+                default:
+                    break;
+            }
+            tempPow.DestroyPowerUp();
         }
     }
 

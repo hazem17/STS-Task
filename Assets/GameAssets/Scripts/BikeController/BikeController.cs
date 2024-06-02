@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Unity.Mathematics;
 using static UnityEngine.GraphicsBuffer;
@@ -8,11 +9,11 @@ using static UnityEngine.GraphicsBuffer;
 public class BikeController : MonoBehaviour
 {
     public bool PC_Controls;
-    //public OVRInput.RawButton brakesButton = OVRInput.RawButton.LIndexTrigger;
+
+    [Header("Controls")]
     public OVRInput.Axis1D speedBTN = OVRInput.Axis1D.SecondaryIndexTrigger;
     public OVRInput.Axis1D brakesBTN = OVRInput.Axis1D.PrimaryIndexTrigger;
-    private Rigidbody rigidBody;
-
+    public OVRInput.RawButton pressButton = OVRInput.RawButton.RHandTrigger;
     public bool engineIsOn;
 
     [Header("Movement Options")]
@@ -22,12 +23,14 @@ public class BikeController : MonoBehaviour
     [SerializeField] private float deceleration;
     [SerializeField] private float currentReverse;
     [SerializeField] private float maxReverse;
+    private CharacterController characterController;
 
     [Header("Ground Options")]
     [SerializeField] private Transform wheel1;
     [SerializeField] private Transform wheel2;
     [SerializeField] private LayerMask groundMask;
     private bool isGrounded;
+    private float notGroundedTimer = 5;
 
     [Header("Steering Options")]
     [SerializeField] private Transform rightHand;
@@ -36,15 +39,29 @@ public class BikeController : MonoBehaviour
     [SerializeField] private Transform steeringObject;
     [SerializeField] private float steeringAngle;
     [SerializeField] private float maxSteeringAngle = 30;
+    private Vector3 currentRotation;
 
     [Header("Target Direction Options")]
     [SerializeField] private Transform directionArrow;
     [SerializeField] private TextMeshPro distanceText;
 
+    [Header("Power-ups Options")]
+    [SerializeField] private ParticleSystem collectTimeParticle;
+    [SerializeField] private ParticleSystem collectSpeedParticle;
+    [SerializeField] private ParticleSystem speedEffectParticle;
+    [SerializeField] private float nitrousPower;
+    [SerializeField] private AnimationCurve nitrousCurve;
+    [SerializeField] private float nitrousTime;
+    [SerializeField] private Image nitrousImage;
+    private bool hasNitrous;
+    private float extraSpeed;
+
+
     // Start is called before the first frame update
     void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
+        currentRotation.y = -126;
+        //rigidBody = GetComponent<Rigidbody>();
         distanceText.text = "0m";
     }
 
@@ -88,6 +105,12 @@ public class BikeController : MonoBehaviour
 
         //-- calculate bike speed
         CalculateSpeed(speed, brakes);
+
+        if (OVRInput.GetDown(pressButton) && hasNitrous)
+        {
+            StartCoroutine(UseNitrous());
+            hasNitrous = false;
+        }
         
 
     }
@@ -103,18 +126,21 @@ public class BikeController : MonoBehaviour
     {
         RaycastHit hit1;
         RaycastHit hit2;
-        bool firstWheelHit = Physics.Raycast(wheel1.position, -Vector3.up, out hit1, 0.4f, groundMask);
-        bool secondWheelHit = Physics.Raycast(wheel2.position, -Vector3.up, out hit2, 0.4f, groundMask);
+        bool firstWheelHit = Physics.Raycast(wheel1.position, -Vector3.up, out hit1, 1f, groundMask);
+        bool secondWheelHit = Physics.Raycast(wheel2.position, -Vector3.up, out hit2, 1f, groundMask);
         if (firstWheelHit || secondWheelHit)
         {
             Debug.DrawRay(wheel1.position, -Vector3.up * hit1.distance, Color.yellow);
             Debug.DrawRay(wheel2.position, -Vector3.up * hit2.distance, Color.yellow);
             Debug.Log("Did Hit");
+            notGroundedTimer = 5;
             return true;
-
         }
         else
         {
+            notGroundedTimer-=Time.deltaTime;
+            if (notGroundedTimer < 0)
+                transform.position = Vector3.zero;
             return false;
         }
     }
@@ -153,11 +179,15 @@ public class BikeController : MonoBehaviour
 
     private void MoveBike()
     {
-        transform.position += (transform.forward * currentSpeed * Time.deltaTime + transform.forward * -currentReverse * Time.deltaTime);
+        transform.position += (transform.forward * (currentSpeed + extraSpeed) * Time.deltaTime + transform.forward * -currentReverse * Time.deltaTime);
 
-        if (rigidBody.velocity.magnitude > 0)
+        if (currentSpeed > 0 || currentReverse > 0)
         {
-            transform.Rotate(transform.up, Time.deltaTime * steeringAngle);
+            currentRotation.y += Time.deltaTime * steeringAngle;
+            Quaternion Q = Quaternion.Euler(currentRotation.x, currentRotation.y, currentRotation.z);
+            transform.rotation = Q;
+            //transform.Rotate(Vector3.up, Time.deltaTime * steeringAngle);
+            //transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y + Time.deltaTime * steeringAngle, 0);
         }
     }
 
@@ -189,24 +219,46 @@ public class BikeController : MonoBehaviour
         {
             print("Package delivered");
             GameManager.Instance.DeliverPackage();
+            AudioManager.Instance.PlaySFX("DeliverPackage");
         }
         else if (other.CompareTag("PowerUp"))
         {
             PowerUp tempPow = other.gameObject.GetComponent<PowerUp>();
+            AudioManager.Instance.PlaySFX("Collect");
             switch (tempPow.powerUpType)
             {
                 case PowerUpType.Time:
                     GameManager.Instance.IncreaseTime();
+                    collectTimeParticle.Play();
                     break;
                 case PowerUpType.Missile:
                     break;
                 case PowerUpType.Speed:
+                    hasNitrous = true;
+                    collectSpeedParticle.Play();
+                    nitrousImage.color = Color.white;
                     break;
                 default:
                     break;
             }
             tempPow.DestroyPowerUp();
         }
+    }
+
+    IEnumerator UseNitrous()
+    {
+        speedEffectParticle.Play();
+        nitrousImage.color = Color.white / 2;
+        AudioManager.Instance.PlaySFX("Nitrous");
+        float timer = 0;
+        while (timer < nitrousTime)
+        {
+            extraSpeed = Mathf.Lerp(0, nitrousPower, nitrousCurve.Evaluate(timer / nitrousTime));
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        speedEffectParticle.Stop();
+        extraSpeed = 0;
     }
 
 

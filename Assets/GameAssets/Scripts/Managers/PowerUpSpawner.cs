@@ -11,11 +11,6 @@ public class PowerUpSpawner : MonoBehaviour
     [SerializeField] private float maxSpawnRange = 10;
     [SerializeField] private float spawnRangeRight = 5;
     [SerializeField] private BikeController bikeRef;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     public void StartSpawning()
     {
@@ -25,12 +20,23 @@ public class PowerUpSpawner : MonoBehaviour
     IEnumerator SpawnPowerUp()
     {
         yield return new WaitForSeconds(Random.Range(minSpawnTime, maxSpawnTime));
-        Instantiate(powerUpsPrefabs[0],
+        float randomValue = Random.value;
+        int selectedPowerIndex = 0;
+        if (randomValue > 0.3f)
+        {
+            selectedPowerIndex = 0;
+        }
+        else
+        {
+            selectedPowerIndex = 1;
+        }
+        PowerUp temp = Instantiate(powerUpsPrefabs[selectedPowerIndex],
             bikeRef.transform.position
             + bikeRef.transform.forward * Random.Range(minSpawnRange, maxSpawnRange)
-            + bikeRef.transform.right * Random.Range(-spawnRangeRight, spawnRangeRight)
-            + new Vector3(0,1,0), 
+            + bikeRef.transform.right * Random.Range(-spawnRangeRight, spawnRangeRight), 
             Quaternion.identity);
+
+        temp.transform.position = new Vector3(temp.transform.position.x,1, temp.transform.position.z);
 
         StartCoroutine(SpawnPowerUp());
     }

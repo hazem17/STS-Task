@@ -20,15 +20,19 @@ public class PowerUp : MonoBehaviour
     [SerializeField] private float frq;
     private Vector3 initLocation;
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
         col = GetComponent<Collider>();
         StartCoroutine(AnimateIcon());
         initLocation = transform.position;
+        yield return new WaitForSeconds(10);
+        DestroyPowerUp();
     }
     void Update()
     {
         transform.position = initLocation + new Vector3(0, math.sin(Time.time * frq) * mag, 0);
+        transform.LookAt(new Vector3(GameManager.Instance.BikeController.transform.position.x, transform.position.y, GameManager.Instance.BikeController.transform.position.z));
+
     }
     public void DestroyPowerUp()
     {

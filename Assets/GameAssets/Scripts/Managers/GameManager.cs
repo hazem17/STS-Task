@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -23,18 +24,19 @@ public class GameManager : Singleton<GameManager>
     public BikeController BikeController { get => bikeController; }
 
     // Start is called before the first frame update
-    IEnumerator Start()
+    void Start()
     {
         currentTime = gameTime;
         UIController.Instance.SetTimer(currentTime);
         UIController.Instance.UpdateScore(playerScore);
-
-        yield return new WaitForSeconds(3);
-        StartCoroutine(CountdownTimer());
-        
     }
 
-    // Update is called once per frame
+    public void StartCountdown()
+    {
+        StartCoroutine(CountdownTimer());
+        UIController.Instance.ToggleMainMen(false);
+    }
+
     void Update()
     {
         if (gameStarted)
@@ -43,11 +45,7 @@ public class GameManager : Singleton<GameManager>
             UIController.Instance.SetTimer(currentTime);
             if (currentTime <= 0)
             {
-                gameStarted = false;
-                UIController.Instance.SetTimer(0);
-                print("End Game");
-                bikeController.StopBike();
-                UIController.Instance.DisplayMessage("Times Up!!!");
+                EndGame();
             }
         }
 
@@ -59,6 +57,17 @@ public class GameManager : Singleton<GameManager>
         {
             Time.timeScale = 1;
         }
+    }
+
+    private void EndGame()
+    {
+        gameStarted = false;
+        UIController.Instance.SetTimer(0);
+        print("End Game");
+        bikeController.StopBike();
+        UIController.Instance.DisplayMessage("Times Up!!!");
+        UIController.Instance.ShowEndScreen(playerScore);
+        AudioManager.Instance.SwitchMusic("MenuMusic");
     }
 
     public void DeliverPackage()
@@ -78,15 +87,21 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator CountdownTimer()
     {
+        AudioManager.Instance.SwitchMusic("GameMusic");
         for (int i = 3; i >= 0; i--)
         {
             string displayText = i.ToString();
             if (i == 0)
             {
                 displayText = "GO!!!";
+                AudioManager.Instance.PlaySFX("Start");
+            }
+            else
+            {
+                AudioManager.Instance.PlaySFX("Countdown");
             }
             UIController.Instance.DisplayMessage(displayText);
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(1.55f);
         }
         StartGame();
     }
@@ -99,9 +114,15 @@ public class GameManager : Singleton<GameManager>
         currentDeliverTarget.TriggerTarget(true);
         deliverTargetArray.Remove(currentDeliverTarget);
         powerUpSpawner.StartSpawning();
+       
     }
     public void IncreaseTime()
     {
         currentTime += 10;
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(0);
     }
 }

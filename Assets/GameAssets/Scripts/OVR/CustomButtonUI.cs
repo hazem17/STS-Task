@@ -16,7 +16,6 @@ public class CustomButtonUI : MonoBehaviour
     public UnityEvent buttonAction;
 
     private BoxCollider buttonCollider;
-    private bool isReady = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,11 +35,17 @@ public class CustomButtonUI : MonoBehaviour
         normalImg = buttonImage.sprite;
     }
 
+    //-------------------------
+    //-- Toggle Button collision
+    //-------------------------
     private void Toggle(bool state)
     {
         buttonCollider.enabled = state;
     }
 
+    //-------------------------
+    //-- Change Button State: normal, hover and press
+    //-------------------------
     public void NormalButton()
     {
         if (buttonCollider.enabled)

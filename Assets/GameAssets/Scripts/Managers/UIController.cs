@@ -30,11 +30,13 @@ public class UIController : Singleton<UIController>
     // Start is called before the first frame update
     void Start()
     {
-        SetTimer(235);
         messageTextCanvasGroup.alpha = 0;
         controlsPanel.alpha = 0;
     }
 
+    //-------------------------
+    //-- Update Score and time
+    //-------------------------
     public void SetTimer(float time)
     {
         TimeSpan timeSpan = TimeSpan.FromSeconds(time);
@@ -45,11 +47,17 @@ public class UIController : Singleton<UIController>
         scoreText.text = score.ToString();
     }
 
+    //-------------------------
+    //-- Display message to player
+    //-------------------------
     public void DisplayMessage(string message)
     {
         messageText.text = message;
         StartCoroutine(AnimateTextMessage(0.5f));
     }
+    //-------------------------
+    //-- Animate displayed message
+    //-------------------------
     IEnumerator AnimateTextMessage(float animTime)
     {
         float timer = 0;
@@ -74,11 +82,17 @@ public class UIController : Singleton<UIController>
         messageTextCanvasGroup.alpha = 0;
     }
 
+    //-------------------------
+    //-- Toggle controls panel
+    //-------------------------
     public void ToggleControls(bool state)
     {
         StartCoroutine(ToggleCanvasGroupAnimated(controlsPanel, state));
     }
 
+    //-------------------------
+    //-- Show end game screen
+    //-------------------------
     public void ShowEndScreen(int score)
     {
         mainPanelCanvas.gameObject.SetActive(true);
@@ -89,11 +103,17 @@ public class UIController : Singleton<UIController>
         UI_RayCaster.gameObject.SetActive(true);
     }
 
+    //-------------------------
+    //-- Toggle main menu
+    //-------------------------
     public void ToggleMainMen(bool state)
     {
         StartCoroutine(ToggleCanvasGroupAnimated(mainPanelCanvas, state));
     }
 
+    //-------------------------
+    //-- animate any canvas group
+    //-------------------------
     IEnumerator ToggleCanvasGroupAnimated(CanvasGroup canvasGroup, bool state)
     {
         AnimationCurve animCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);

@@ -57,15 +57,12 @@ public class BikeController : MonoBehaviour
     private float extraSpeed;
 
 
-    // Start is called before the first frame update
     void Start()
     {
-        currentRotation.y = -126;
-        //rigidBody = GetComponent<Rigidbody>();
+        currentRotation.y = transform.eulerAngles.y;
         distanceText.text = "0m";
     }
 
-    // Update is called once per frame
     void Update()
     {
         float speed;
@@ -84,10 +81,6 @@ public class BikeController : MonoBehaviour
             brakes = OVRInput.Get(brakesBTN);
             CalculateSteering();
         }
-
-        //--- calculate steering 
-        
-        
 
         if (!engineIsOn)
             return;
@@ -115,6 +108,7 @@ public class BikeController : MonoBehaviour
 
     }
 
+    //---- stop bike at Game End
     public void StopBike()
     {
         currentSpeed = 0;
@@ -122,6 +116,9 @@ public class BikeController : MonoBehaviour
         engineIsOn= false;
     }
 
+    //-------------------------
+    //-- check if grounded to move car and if car fell off map
+    //-------------------------
     private bool CheckIsGrounded()
     {
         RaycastHit hit1;
@@ -145,6 +142,9 @@ public class BikeController : MonoBehaviour
         }
     }
 
+    //-------------------------
+    //-- Update speed and reverse values
+    //-------------------------
     private void CalculateSpeed(float speed, float brakes)
     {
         if (isGrounded)
@@ -177,6 +177,10 @@ public class BikeController : MonoBehaviour
         currentReverse = math.clamp(currentReverse, 0, maxReverse);
     }
 
+
+    //-------------------------
+    //-- Move and rotate bike according to speed and steering angle
+    //-------------------------
     private void MoveBike()
     {
         transform.position += (transform.forward * (currentSpeed + extraSpeed) * Time.deltaTime + transform.forward * -currentReverse * Time.deltaTime);
@@ -186,11 +190,12 @@ public class BikeController : MonoBehaviour
             currentRotation.y += Time.deltaTime * steeringAngle;
             Quaternion Q = Quaternion.Euler(currentRotation.x, currentRotation.y, currentRotation.z);
             transform.rotation = Q;
-            //transform.Rotate(Vector3.up, Time.deltaTime * steeringAngle);
-            //transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y + Time.deltaTime * steeringAngle, 0);
         }
     }
 
+    //-------------------------
+    //-- Rotate direction arrow to point at the target package
+    //-------------------------
     private void GetPackageDirection()
     {
         if (GameManager.Instance.currentDeliverTarget)
@@ -201,6 +206,9 @@ public class BikeController : MonoBehaviour
         }
     }
 
+    //-------------------------
+    //-- Calculate steering angle accodring to hands location
+    //-------------------------
     private void CalculateSteering()
     {
         Vector3 rightHandPos = new Vector3(rightHand.position.x, steeringCenter.position.y, rightHand.position.z);
@@ -213,6 +221,9 @@ public class BikeController : MonoBehaviour
         steeringObject.localEulerAngles = new Vector3(0, steeringAngle, 0);
     }
 
+    //-------------------------
+    //-- Player collected packages and powerups
+    //-------------------------
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("DeliverTarget"))
@@ -245,6 +256,9 @@ public class BikeController : MonoBehaviour
         }
     }
 
+    //-------------------------
+    //-- user speed boost power-up
+    //-------------------------
     IEnumerator UseNitrous()
     {
         speedEffectParticle.Play();

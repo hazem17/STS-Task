@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//-------------------------
+//-- Take screenshot to use it in mini map
+//-------------------------
 public class CameraScreenshot : MonoBehaviour
 {
     // Start is called before the first frame update

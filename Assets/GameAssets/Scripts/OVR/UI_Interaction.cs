@@ -27,6 +27,9 @@ public class UI_Interaction : MonoBehaviour
         if (!isEnabled)
             return;
 
+        //-------------------------
+        //-- Raycasting logic: hover, press and normal, trigger button actions
+        //-------------------------
         if (OVRInput.GetDown(pressButton))
         {
             if (selectedButton != null)
@@ -94,6 +97,9 @@ public class UI_Interaction : MonoBehaviour
         }
     }
 
+    //-------------------------
+    //-- toggle raycasting
+    //-------------------------
     public void ToggleRay(bool state)
     {
         if (state)

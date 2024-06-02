@@ -30,15 +30,26 @@ public class PowerUp : MonoBehaviour
     }
     void Update()
     {
+        //-------------------------
+        //-- float power-up to sine wave
+        //-------------------------
         transform.position = initLocation + new Vector3(0, math.sin(Time.time * frq) * mag, 0);
         transform.LookAt(new Vector3(GameManager.Instance.BikeController.transform.position.x, transform.position.y, GameManager.Instance.BikeController.transform.position.z));
 
     }
+
+    //-------------------------
+    //-- Remove Power-up
+    //-------------------------
     public void DestroyPowerUp()
     {
         StartCoroutine(AnimatePowerUp(false));
         col.enabled = false;
     }
+
+    //-------------------------
+    //-- animate spawning and despawning of power-up
+    //-------------------------
     IEnumerator AnimatePowerUp(bool state)
     {
         float init = state ? 0 : 1;
@@ -60,6 +71,9 @@ public class PowerUp : MonoBehaviour
         }
     }
 
+    //-------------------------
+    //-- Animate power-up icon
+    //-------------------------
     IEnumerator AnimateIcon()
     {
         AnimationCurve animCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);

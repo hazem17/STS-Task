@@ -59,6 +59,9 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    //-------------------------
+    //-- End game: stop bike and show final score
+    //-------------------------
     private void EndGame()
     {
         gameStarted = false;
@@ -70,6 +73,9 @@ public class GameManager : Singleton<GameManager>
         AudioManager.Instance.SwitchMusic("MenuMusic");
     }
 
+    //-------------------------
+    //-- player delivered package. select new package
+    //-------------------------
     public void DeliverPackage()
     {
         playerScore += baseDeliverScore;
@@ -85,6 +91,9 @@ public class GameManager : Singleton<GameManager>
         deliverTargetArray.Add(temp);
     }
 
+    //-------------------------
+    //-- Countdown timer
+    //-------------------------
     IEnumerator CountdownTimer()
     {
         AudioManager.Instance.SwitchMusic("GameMusic");
@@ -106,6 +115,9 @@ public class GameManager : Singleton<GameManager>
         StartGame();
     }
 
+    //-------------------------
+    //-- Start game: turn bike on and spawn packages and power-ups
+    //-------------------------
     private void StartGame()
     {
         gameStarted = true;
@@ -116,11 +128,18 @@ public class GameManager : Singleton<GameManager>
         powerUpSpawner.StartSpawning();
        
     }
+
+    //-------------------------
+    //-- collected time power-up
+    //-------------------------
     public void IncreaseTime()
     {
         currentTime += 10;
     }
 
+    //-------------------------
+    //-- Restart Game
+    //-------------------------
     public void RestartGame()
     {
         SceneManager.LoadScene(0);

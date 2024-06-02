@@ -17,6 +17,9 @@ public class PowerUpSpawner : MonoBehaviour
         StartCoroutine(SpawnPowerUp());
     }
 
+    //-------------------------
+    //-- Spawn power-up process, spawn it in front of player
+    //-------------------------
     IEnumerator SpawnPowerUp()
     {
         yield return new WaitForSeconds(Random.Range(minSpawnTime, maxSpawnTime));

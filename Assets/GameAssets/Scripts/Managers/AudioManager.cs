@@ -29,6 +29,9 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
+    //-------------------------
+    //-- change BG Music
+    //-------------------------
     public void SwitchMusic(string musicID)
     {
         for (int i = 0; i < SFXArray.Length; i++)
@@ -41,7 +44,9 @@ public class AudioManager : Singleton<AudioManager>
             }
         }
     }
-
+    //-------------------------
+    //-- Play sound effect
+    //-------------------------
     public void PlaySFX(string clipID)
     {
 

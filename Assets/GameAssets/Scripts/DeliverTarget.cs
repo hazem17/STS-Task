@@ -19,6 +19,9 @@ public class DeliverTarget : MonoBehaviour
         mapPinpoint.localEulerAngles = new Vector3(90, 0, -GameManager.Instance.BikeController.transform.eulerAngles.y);
     }
 
+    //-------------------------
+    //-- Trigger Deliver Target
+    //-------------------------
     public void TriggerTarget(bool state)
     {
         triggerObject.SetActive(state);

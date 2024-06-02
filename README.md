@@ -15,3 +15,8 @@ Game Link
 - Hold the right trigger button to accelerate 
 - Hold the left trigger button to brake/reverse
 - Press the right grip button to use speed boost/nitrous if collected
+
+Info
+-------------------
+- **Platform:** Oculus Quest
+- **Engine:** Unity 2020.3.0f1
